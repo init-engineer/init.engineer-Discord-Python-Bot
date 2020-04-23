@@ -1,2 +1,10 @@
-# Discord-Python-Bot
-這是一項使用 Python 撰寫的 Discord 機器人專案，用於純靠北工程師 Discord 群組。
+# INIT.ENGINEER DISCORD BOT
+
+本機器人是以 [discord_bot.py](https://github.com/AlexFlipnote/discord_bot.py) 作為模板上的延伸。
+
+# 如何使用它？
+
+1. 在[此處](https://discordapp.com/developers/applications/me)建立機器人，並取得機器人的 Token。
+2. 將根目錄下的 `config.json.example` 檔案重新命名為 `config.json`，然後填寫所需的資訊，例如 token、prefix 和 game。
+3. 要安裝應用程式所需要的套件，請執行 `pip install -r requirements.txt`，如果上面沒辦法正常執行的話，請執行 `python -m pip install -r requirements.txt`，要注意的是這可能需要使用 `Administrator/sudo` 來執行。
+4. 透過 `cmd/terminal` 終端機來啟動應用程式，你必須移動到該應用程式的資料夾，並且輸入 `python index.py` 來啟動。

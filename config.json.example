@@ -1,0 +1,14 @@
+{
+    "token": "YOUR_DISCORD_BOT_TOKEN",
+    "join_message": "如果有新人加入時的資訊 🌟",
+    "owners": [
+        11111111111111111
+    ],
+    "prefix": [
+        "!"
+    ],
+    "playing": "機器人正在玩的遊戲名稱",
+    "playing_type": "playing(正在玩)|watching(觀看中)|listening(收聽中)",
+    "status_type": "online(線上)|idle(閒置)|dnd(請勿打擾)",
+    "version": "1.0.0"
+}
