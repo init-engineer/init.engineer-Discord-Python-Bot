@@ -8,19 +8,12 @@ import re
 
 from io import BytesIO
 from discord.ext import commands
-from utils import lists, permissions, http, default, argparser
-
+from utils import permissions, http, default, argparser
 
 class Fun_Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
-
-    @commands.command(aliases=['8ball'])
-    async def eightball(self, ctx, *, question: commands.clean_content):
-        """ Consult 8ball to receive an answer """
-        answer = random.choice(lists.ballresponse)
-        await ctx.send(f"🎱 **Question:** {question}\n**Answer:** {answer}")
 
     async def randomimageapi(self, ctx, url, endpoint):
         try:
