@@ -187,7 +187,7 @@ class Moderator(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(str(ctx.command))
 
-    @find.command(name="playing")
+    @find.command(name="正在玩")
     async def find_playing(self, ctx, *, search: str):
         loop = []
         for i in ctx.guild.members:
@@ -197,7 +197,7 @@ class Moderator(commands.Cog):
                         loop.append(f"{i} | {type(g).__name__}: {g.name} ({i.id})")
 
         await default.prettyResults(
-            ctx, "playing", f"Found **{len(loop)}** on your search for **{search}**", loop
+            ctx, "正在玩", f"Found **{len(loop)}** on your search for **{search}**", loop
         )
 
     @find.command(name="username", aliases=["name"])

@@ -8,7 +8,7 @@
         "!"
     ],
     "playing": "機器人正在玩的遊戲名稱",
-    "playing_type": "playing(正在玩)|watching(觀看中)|listening(收聽中)",
-    "status_type": "online(線上)|idle(閒置)|dnd(請勿打擾)",
+    "playing_type": "正在玩|觀看中|收聽中",
+    "status_type": "線上|閒置|請勿打擾",
     "version": "1.0.0"
 }

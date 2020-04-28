@@ -69,20 +69,20 @@ class Events(commands.Cog):
             self.bot.uptime = datetime.utcnow()
 
         # Indicate that the bot has successfully booted up
-        print(f'Ready: {self.bot.user} | Servers: {len(self.bot.guilds)}')
+        print(f'準備就緒: {self.bot.user} | 服務數量: {len(self.bot.guilds)}')
 
         # Check if user desires to have something other than online
-        if self.config.status_type == "idle":
+        if self.config.status_type == "閒置":
             status_type = discord.Status.idle
-        elif self.config.status_type == "dnd":
+        elif self.config.status_type == "請勿打擾":
             status_type = discord.Status.dnd
         else:
             status_type = discord.Status.online
 
         # Check if user desires to have a different type of playing status
-        if self.config.playing_type == "listening":
+        if self.config.playing_type == "收聽中":
             playing_type = 2
-        elif self.config.playing_type == "watching":
+        elif self.config.playing_type == "觀看中":
             playing_type = 3
         else:
             playing_type = 0
