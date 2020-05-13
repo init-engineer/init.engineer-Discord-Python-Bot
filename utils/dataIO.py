@@ -6,7 +6,7 @@ def change_value(file: str, value: str, changeto: str):
         with open(file, "r") as jsonFile:
             data = json.load(jsonFile)
     except FileNotFoundError:
-        raise FileNotFoundError("The file you tried to get does not exist...")
+        raise FileNotFoundError("您嘗試讀取的文件不存在 ...")
 
     data[value] = changeto
     with open(file, "w") as jsonFile:
@@ -18,7 +18,7 @@ def append_value(file: str, value: str, addition: str):
         with open(file, "r") as jsonFile:
             data = json.load(jsonFile)
     except FileNotFoundError:
-        raise FileNotFoundError("The file you tried to get does not exist...")
+        raise FileNotFoundError("您嘗試讀取的文件不存在 ...")
 
     data[value].append(addition)
     with open(file, "w") as jsonFile:

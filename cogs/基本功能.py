@@ -19,18 +19,29 @@ class 基本功能(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def 角色列表(self, ctx):
-        """ 獲得頻道當中所有角色的詳細資訊。 """
+    async def 角色列表報告(self, ctx):
+        """ 獲得頻道當中所有角色詳細資訊的報告。 """
         allroles = "```\r\nNUM | USERS |         ID         |       NAME\r\n----+-------+--------------------+------------------------\r\n"
         for num, role in enumerate(sorted(ctx.guild.roles, reverse=True), start=1):
             if role.name != '@everyone':
                 allroles += f"{str(num).rjust(3)} | {str(len(role.members)).rjust(5)} | {role.id} | {role.name}\r\n"
             else:
-                allroles += f"{str(num).rjust(3)} | {str(len(role.members)).rjust(5)} | {role.id} |  {role.name}\r\n"
-        allroles += "```"
+                allroles += f"----+-------+--------------------+------------------------\r\n{str(num).rjust(3)} | {str(len(role.members)).rjust(5)} | {role.id} |  全部```"
         await ctx.send(allroles)
         # data = BytesIO(allroles.encode('utf-8'))
         # await ctx.send(content=f"**{ctx.guild.name}**頻道內所有角色的詳細資訊：", file=discord.File(data, filename=f"{default.timetext('Roles')}"))
+
+    @commands.command()
+    @commands.guild_only()
+    async def 角色列表資料(self, ctx):
+        """ 獲得頻道當中所有角色詳細資訊的資料。 """
+        allroles = ""
+
+        for num, role in enumerate(sorted(ctx.guild.roles, reverse=True), start=1):
+            allroles += f"[{str(num).zfill(2)}] {role.id}\t{role.name}\t[ Users: {len(role.members)} ]\r\n"
+
+        data = BytesIO(allroles.encode('utf-8'))
+        await ctx.send(content=f"Roles in **{ctx.guild.name}**", file=discord.File(data, filename=f"{default.timetext('Roles')}"))
 
     @commands.command()
     @commands.guild_only()

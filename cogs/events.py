@@ -7,7 +7,6 @@ from discord.ext import commands
 from discord.ext.commands import errors
 from utils import default
 
-
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -60,11 +59,11 @@ class Events(commands.Cog):
         try:
             print(f"{ctx.guild.name} > {ctx.author} > {ctx.message.clean_content}")
         except AttributeError:
-            print(f"Private message > {ctx.author} > {ctx.message.clean_content}")
+            print(f"私人訊息 > {ctx.author} > {ctx.message.clean_content}")
 
     @commands.Cog.listener()
     async def on_ready(self):
-        """ The function that actiavtes when boot was completed """
+        """ 機器人啟動完成後會執行的功能。 """
         if not hasattr(self.bot, 'uptime'):
             self.bot.uptime = datetime.utcnow()
 
@@ -91,6 +90,34 @@ class Events(commands.Cog):
             activity=discord.Activity(type=playing_type, name=self.config.playing),
             status=status_type
         )
+
+    # Author by @bbb543123
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        get_roles = 基本功能.角色列表資料()
+
+        if payload.message_id == 705286880920338535:
+
+            guild_id = payload.guild_id
+            guild = discord.utils.find(lambda g: g.id == guild_id, self.bot.guilds)
+            roles = []
+            for role in guild.roles:
+                if not role.permissions.administrator:
+                    roles.append(role.name)
+
+            if payload.emoji.name == "t_":
+                role = discord.utils.get(guild.roles, name="yellow_man")
+                print(role)
+            # if role != None:
+            #     member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            #     if member != None:
+            #         await member.add_roles(role)
+            # if role_name = emoji_name
+            # role = discord.utils.find(lambda r: r.name == payload.emoji.name, guild.roles)
+            #
+            # if role is not None:
+            #     member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            #     await member.add_roles(role)
 
 
 def setup(bot):
