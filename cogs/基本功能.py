@@ -101,7 +101,7 @@ class 基本功能(commands.Cog):
             embed.add_field(name="頻道名稱", value=ctx.guild.name, inline=True)
             embed.add_field(name="頻道 ID", value=ctx.guild.id, inline=True)
             embed.add_field(name="會員人數", value=ctx.guild.member_count, inline=True)
-            embed.add_field(name="機器人數量", value=findbots, inline=True)
+            embed.add_field(name="機器人數量", value=str(findbots), inline=True)
             embed.add_field(name="管理員", value=ctx.guild.owner, inline=True)
             embed.add_field(name="位址", value=ctx.guild.region, inline=True)
             embed.add_field(name="建立於", value=default.date(ctx.guild.created_at), inline=True)

@@ -10,5 +10,14 @@
     "playing": "機器人正在玩的遊戲名稱",
     "playing_type": "正在玩|觀看中|收聽中",
     "status_type": "線上|閒置|請勿打擾",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "reaction_role": {
+        "message": 11111,
+        "roles": [
+            {
+              "sticker": "\uD83C\uDDEE",
+              "role": 111111
+            }
+        ]
+    }
 }

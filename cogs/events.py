@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import errors
 from utils import default
 
+
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -48,7 +49,9 @@ class Events(commands.Cog):
             return
 
         try:
-            to_send = sorted([chan for chan in guild.channels if chan.permissions_for(guild.me).send_messages and isinstance(chan, discord.TextChannel)], key=lambda x: x.position)[0]
+            to_send = \
+                sorted([chan for chan in guild.channels if chan.permissions_for(guild.me).send_messages and isinstance(chan, discord.TextChannel)],
+                       key=lambda x: x.position)[0]
         except IndexError:
             pass
         else:
@@ -94,30 +97,30 @@ class Events(commands.Cog):
     # Author by @bbb543123
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        get_roles = 基本功能.角色列表資料()
+        reaction_role = self.config.reaction_role
+        if payload.message_id == reaction_role.message:
+            role_data = discord.utils.find(lambda r: r.sticker == payload.emoji.name, reaction_role.roles)
+            if role_data is None:
+                print(f"{payload.emoji}沒有對應的身分組")
+                return
+            else:
+                guild = self.bot.get_guild(payload.guild_id)
+                role = guild.get_role(role_data.role)
+                await payload.member.add_roles(role)
 
-        if payload.message_id == 705286880920338535:
-
-            guild_id = payload.guild_id
-            guild = discord.utils.find(lambda g: g.id == guild_id, self.bot.guilds)
-            roles = []
-            for role in guild.roles:
-                if not role.permissions.administrator:
-                    roles.append(role.name)
-
-            if payload.emoji.name == "t_":
-                role = discord.utils.get(guild.roles, name="yellow_man")
-                print(role)
-            # if role != None:
-            #     member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
-            #     if member != None:
-            #         await member.add_roles(role)
-            # if role_name = emoji_name
-            # role = discord.utils.find(lambda r: r.name == payload.emoji.name, guild.roles)
-            #
-            # if role is not None:
-            #     member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
-            #     await member.add_roles(role)
+    @commands.Cog.listener()
+    async def on_raw_reaction_remove(self, payload):
+        reaction_role = self.config.reaction_role
+        if payload.message_id == reaction_role.message:
+            role_data = discord.utils.find(lambda r: r.sticker == payload.emoji.name, reaction_role.roles)
+            if role_data is None:
+                print(f"{payload.emoji}沒有對應的身分組")
+                return
+            else:
+                guild = self.bot.get_guild(payload.guild_id)
+                role = guild.get_role(role_data.role)
+                member = guild.get_member(payload.user_id)
+                await member.remove_roles(role)
 
 
 def setup(bot):
