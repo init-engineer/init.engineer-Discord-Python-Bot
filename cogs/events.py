@@ -6,7 +6,6 @@ from datetime import datetime
 from discord.ext import commands
 from discord.ext.commands import errors
 from utils import default
-from cogs import 基本功能
 
 
 class Events(commands.Cog):
