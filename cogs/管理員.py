@@ -59,7 +59,7 @@ class 管理員(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.send(f"窩成功ㄉ重新載入了 **{name}.py** 哦汪 (`・ω・´)。")
 
-    @commands.command()
+    @commands.command(aliases=["r"])
     @commands.check(permissions.is_owner)
     async def 重新載入所有cogs(self, ctx):
         """ 重新載入所有的 cogs 擴展功能。 """
