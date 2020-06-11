@@ -1,81 +1,91 @@
-import random
-import discord
-import urllib
-import secrets
 import asyncio
-import aiohttp
+import random
 import re
-
+import secrets
 from io import BytesIO
-from discord.ext import commands
-from utils import permissions, http, default, argparser
+from urllib.parse import quote
 
-class Fun_Commands(commands.Cog):
+import aiohttp
+import discord
+from discord.ext import commands
+from discord.ext.commands import clean_content
+
+from utils import (
+    argparser,
+    default,
+    http,
+    permissions,
+)
+
+
+async def random_image_api(ctx, url, endpoint):
+    try:
+        r = await http.get(url, res_method="json", no_cache=True)
+    except aiohttp.ClientConnectorError:
+        return await ctx.send("The API seems to be down...")
+    except aiohttp.ContentTypeError:
+        return await ctx.send("The API returned an error or didn't return JSON...")
+
+    await ctx.send(r[endpoint])
+
+
+async def api_img_creator(ctx, url, filename, content=None):
+    async with ctx.channel.typing():
+        req = await http.get(url, res_method="read")
+
+        if req is None:
+            return await ctx.send("I couldn't create the image ;-;")
+
+        bio = BytesIO(req)
+        bio.seek(0)
+        await ctx.send(content=content, file=discord.File(bio, filename=filename))
+
+
+class FunCommands(commands.Cog, name="有趣指令"):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
 
-    async def randomimageapi(self, ctx, url, endpoint):
-        try:
-            r = await http.get(url, res_method="json", no_cache=True)
-        except aiohttp.ClientConnectorError:
-            return await ctx.send("The API seems to be down...")
-        except aiohttp.ContentTypeError:
-            return await ctx.send("The API returned an error or didn't return JSON...")
-
-        await ctx.send(r[endpoint])
-
-    async def api_img_creator(self, ctx, url, filename, content=None):
-        async with ctx.channel.typing():
-            req = await http.get(url, res_method="read")
-
-            if req is None:
-                return await ctx.send("I couldn't create the image ;-;")
-
-            bio = BytesIO(req)
-            bio.seek(0)
-            await ctx.send(content=content, file=discord.File(bio, filename=filename))
-
-    @commands.command()
+    @commands.command(name="貓", aliases=["cat"])
     @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
     async def cat(self, ctx):
-        """ Posts a random cat """
-        await self.randomimageapi(ctx, 'https://api.alexflipnote.dev/cats', 'file')
+        """ 發送一張隨機的貓照片 """
+        await random_image_api(ctx, 'https://api.alexflipnote.dev/cats', 'file')
 
-    @commands.command()
+    @commands.command(name="狗", aliases=["dog"])
     @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
     async def dog(self, ctx):
-        """ Posts a random dog """
-        await self.randomimageapi(ctx, 'https://api.alexflipnote.dev/dogs', 'file')
+        """ 發送一張隨機的狗照片 """
+        await random_image_api(ctx, 'https://api.alexflipnote.dev/dogs', 'file')
 
-    @commands.command(aliases=["bird"])
+    @commands.command(name="鳥", aliases=["bird", "birb"])
     @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
-    async def birb(self, ctx):
-        """ Posts a random birb """
-        await self.randomimageapi(ctx, 'https://api.alexflipnote.dev/birb', 'file')
+    async def bird(self, ctx):
+        """ 發送一張隨機的鳥照片 """
+        await random_image_api(ctx, 'https://api.alexflipnote.dev/birb', 'file')
 
-    @commands.command()
+    @commands.command(name="鴨子", aliases=["duck"])
     @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
     async def duck(self, ctx):
-        """ Posts a random duck """
-        await self.randomimageapi(ctx, 'https://random-d.uk/api/v1/random', 'url')
+        """ 發送一張隨機的鴨子照 """
+        await random_image_api(ctx, 'https://random-d.uk/api/v1/random', 'url')
 
-    @commands.command(aliases=['flip', 'coin'])
-    async def coinflip(self, ctx):
-        """ Coinflip! """
-        coinsides = ['Heads', 'Tails']
-        await ctx.send(f"**{ctx.author.name}** flipped a coin and got **{random.choice(coinsides)}**!")
+    @commands.command(name="翻硬幣", aliases=['flip', 'coin'])
+    async def coin_flip(self, ctx):
+        """ 翻硬幣! """
+        coin_sides = ['Heads', 'Tails']
+        await ctx.send(f"**{ctx.author.name}** flipped a coin and got **{random.choice(coin_sides)}**!")
 
     @commands.command()
-    async def f(self, ctx, *, text: commands.clean_content = None):
+    async def f(self, ctx, *, text: clean_content = None):
         """ Press F to pay respect """
         hearts = ['❤', '💛', '💚', '💙', '💜']
         reason = f"for **{text}** " if text else ""
         await ctx.send(f"**{ctx.author.name}** has paid their respect {reason}{random.choice(hearts)}")
 
     @commands.command()
-    async def supreme(self, ctx, *, text: commands.clean_content(fix_channel_mentions=True)):
-        """ Make a fake Supreme logo
+    async def supreme(self, ctx, *, text: clean_content(fix_channel_mentions=True)):
+        """ 製作一個假的 Supreme logo
 
         Arguments:
             --dark | Make the background to dark colour
@@ -90,24 +100,24 @@ class Fun_Commands(commands.Cog):
         if not valid_check:
             return await ctx.send(args)
 
-        inputText = urllib.parse.quote(' '.join(args.input))
-        if len(inputText) > 500:
+        input_text = quote(' '.join(args.input))
+        if len(input_text) > 500:
             return await ctx.send(f"**{ctx.author.name}**, the Supreme API is limited to 500 characters, sorry.")
 
-        darkorlight = ""
+        dark_or_light = ""
         if args.dark:
-            darkorlight = "dark=true"
+            dark_or_light = "dark=true"
         if args.light:
-            darkorlight = "light=true"
+            dark_or_light = "light=true"
         if args.dark and args.light:
             return await ctx.send(f"**{ctx.author.name}**, you can't define both --dark and --light, sorry..")
 
-        await self.api_img_creator(ctx, f"https://api.alexflipnote.dev/supreme?text={inputText}&{darkorlight}", "supreme.png")
+        await api_img_creator(ctx, f"https://api.alexflipnote.dev/supreme?text={input_text}&{dark_or_light}", "supreme.png")
 
-    @commands.command(aliases=['color'])
+    @commands.command(name="顏色", aliases=['colour', 'color'])
     @commands.cooldown(rate=1, per=3.0, type=commands.BucketType.user)
     async def colour(self, ctx, colour: str):
-        """ View the colour HEX details """
+        """ 查看顏色的 HEX 詳細資訊 """
         async with ctx.channel.typing():
             if not permissions.can_embed(ctx):
                 return await ctx.send("I can't embed in this channel ;-;")
@@ -141,8 +151,8 @@ class Fun_Commands(commands.Cog):
 
     @commands.command()
     @commands.cooldown(rate=1, per=2.0, type=commands.BucketType.user)
-    async def urban(self, ctx, *, search: commands.clean_content):
-        """ Find the 'best' definition to your words """
+    async def urban(self, ctx, *, search: clean_content):
+        """ 尋找你字的『最佳』定義 """
         async with ctx.channel.typing():
             try:
                 url = await http.get(f'https://api.urbandictionary.com/v0/define?term={search}', res_method="json")
@@ -165,36 +175,36 @@ class Fun_Commands(commands.Cog):
 
             await ctx.send(f"📚 Definitions for **{result['word']}**```fix\n{definition}```")
 
-    @commands.command()
+    @commands.command(name="反轉", aliases=["reverse"])
     async def reverse(self, ctx, *, text: str):
-        """ !poow ,ffuts esreveR
+        """ !轉反會都入輸有所
         Everything you type after reverse will of course, be reversed
         """
         t_rev = text[::-1].replace("@", "@\u200B").replace("&", "&\u200B")
         await ctx.send(f"🔁 {t_rev}")
 
-    @commands.command()
-    async def password(self, ctx, nbytes: int = 18):
-        """ Generates a random password string for you
+    @commands.command(name="密碼", aliases=["password"])
+    async def password(self, ctx, n_bytes: int = 18):
+        """ 為你生成一串隨機的密碼字串
 
         This returns a random URL-safe text string, containing nbytes random bytes.
         The text is Base64 encoded, so on average each byte results in approximately 1.3 characters.
         """
-        if nbytes not in range(3, 1401):
+        if n_bytes not in range(3, 1401):
             return await ctx.send("I only accept any numbers between 3-1400")
         if hasattr(ctx, 'guild') and ctx.guild is not None:
             await ctx.send(f"Sending you a private message with your random generated password **{ctx.author.name}**")
-        await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(nbytes)}")
+        await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(n_bytes)}")
 
     @commands.command()
-    async def rate(self, ctx, *, thing: commands.clean_content):
+    async def rate(self, ctx, *, thing: clean_content):
         """ Rates what you desire """
         rate_amount = random.uniform(0.0, 100.0)
         await ctx.send(f"I'd rate `{thing}` a **{round(rate_amount, 4)} / 100**")
 
-    @commands.command()
-    async def beer(self, ctx, user: discord.Member = None, *, reason: commands.clean_content = ""):
-        """ Give someone a beer! 🍻 """
+    @commands.command(name="啤酒", aliases=["beer"])
+    async def beer(self, ctx, user: discord.Member = None, *, reason: clean_content = ""):
+        """ 給某人一杯啤酒! 🍻 """
         if not user or user.id == ctx.author.id:
             return await ctx.send(f"**{ctx.author.name}**: paaaarty!🎉🍺")
         if user.id == self.bot.user.id:
@@ -207,7 +217,7 @@ class Fun_Commands(commands.Cog):
         msg = await ctx.send(beer_offer)
 
         def reaction_check(m):
-            if (m.message_id == msg.id and m.user_id == user.id and str(m.emoji) == "🍻"):
+            if m.message_id == msg.id and m.user_id == user.id and str(m.emoji) == "🍻":
                 return True
             return False
 
@@ -225,8 +235,8 @@ class Fun_Commands(commands.Cog):
             await msg.edit(content=beer_offer)
 
     @commands.command(aliases=['howhot', 'hot'])
-    async def hotcalc(self, ctx, *, user: discord.Member = None):
-        """ Returns a random percent for how hot is a discord user """
+    async def hot_calc(self, ctx, *, user: discord.Member = None):
+        """ 隨機回傳一個百分比來代表一個人有多 hot """
         user = user or ctx.author
 
         random.seed(user.id)
@@ -244,7 +254,7 @@ class Fun_Commands(commands.Cog):
         await ctx.send(f"**{user.name}** is **{hot:.2f}%** hot {emoji}")
 
     @commands.command(aliases=['noticemesenpai'])
-    async def noticeme(self, ctx):
+    async def notice_me(self, ctx):
         """ Notice me senpai! owo """
         if not permissions.can_upload(ctx):
             return await ctx.send("I cannot send images here ;-;")
@@ -252,7 +262,7 @@ class Fun_Commands(commands.Cog):
         bio = BytesIO(await http.get("https://i.alexflipnote.dev/500ce4.gif", res_method="read"))
         await ctx.send(file=discord.File(bio, filename="noticeme.gif"))
 
-    @commands.command(aliases=['slots', 'bet'])
+    @commands.command(name="老虎機", aliases=['slots', 'bet'])
     @commands.cooldown(rate=1, per=3.0, type=commands.BucketType.user)
     async def slot(self, ctx):
         """ Roll the slot machine """
@@ -263,7 +273,7 @@ class Fun_Commands(commands.Cog):
 
         slotmachine = f"**[ {a} {b} {c} ]\n{ctx.author.name}**,"
 
-        if (a == b == c):
+        if a == b == c:
             await ctx.send(f"{slotmachine} All matching, you won! 🎉")
         elif (a == b) or (a == c) or (b == c):
             await ctx.send(f"{slotmachine} 2 in a row, you won! 🎉")
@@ -272,4 +282,4 @@ class Fun_Commands(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Fun_Commands(bot))
+    bot.add_cog(FunCommands(bot))

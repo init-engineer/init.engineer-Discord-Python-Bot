@@ -94,7 +94,6 @@ class Events(commands.Cog):
             status=status_type
         )
 
-    # Author by @bbb543123
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         reaction_role = self.config.reaction_role
