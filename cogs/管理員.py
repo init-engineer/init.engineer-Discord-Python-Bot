@@ -8,7 +8,6 @@ import sys
 from discord.ext import commands
 from utils import permissions, default, http, dataIO
 
-
 class 管理員(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -103,7 +102,13 @@ class 管理員(commands.Cog):
     async def 重新啟動(self, ctx):
         """ 重新啟動機器人。 """
         await ctx.send('我現在要睡覺覺惹，主人晚安汪  ... (\*´з｀\*)')
-        time.sleep(1)
+        sys.exit(100)
+
+    @commands.command()
+    @commands.check(permissions.is_owner)
+    async def 關閉(self, ctx):
+        """ 關閉機器人。 """
+        await ctx.send('我現在要睡覺覺惹，主人晚安汪  ... (\*´з｀\*)')
         sys.exit(0)
 
     @commands.command()
