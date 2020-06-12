@@ -15,8 +15,8 @@
 * ``prefix`` : 指令前綴
 * ``owners`` : 陣列，內容為開發者的ID
 * ``botserver`` : discord伺服器邀請連結，使用指令botserver會傳給使用者
-* ``reaction_role`` : "加入反應以獲得相對應身分組功能"的詳細資料
-    * ``message`` : 希望使用者對哪條訊息加入反應的ID
+* ``reaction_roles`` : 陣列，"加入反應以獲得相對應身分組功能"的詳細資料
+    * ``message`` : 希望使用者對哪則訊息加入反應的ID
     * ``roles`` : 陣列，內容為加入反應的貼圖名稱以及相對應的身分組
         * ``sticker`` : 加入反應的貼圖**名稱**，unicode emoji的名字即為emoji本身，伺服器的emoji則為當時設定的名稱
         * ``role`` : 相對應的身分組的ID
