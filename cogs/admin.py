@@ -1,22 +1,27 @@
-import time
-import aiohttp
-import discord
 import importlib
 import os
 import sys
 
+import aiohttp
+import discord
 from discord.ext import commands
-from utils import permissions, default, http, dataIO
+
+from utils import (
+    dataIO,
+    default,
+    http,
+    permissions,
+)
 
 
-class 管理員(commands.Cog):
+class Admin(commands.Cog, name="管理員"):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
         self._last_result = None
 
-    @commands.command()
-    async def 我是管理者嗎(self, ctx):
+    @commands.command(name="我是管理者嗎", aliases=["amiadmin"])
+    async def am_i_admin(self, ctx):
         """ 我是管理者嗎？ """
         if ctx.author.id in self.config.owners:
             return await ctx.send(f"不，**{ctx.author.name}** 你是個非常好的管理者！✅")
@@ -29,9 +34,9 @@ class 管理員(commands.Cog):
 
         await ctx.send(f"不，真的不，**{ctx.author.name}** 你什麼都不是。")
 
-    @commands.command()
+    @commands.command(name="加載cogs", aliases=["load"])
     @commands.check(permissions.is_owner)
-    async def 加載cogs(self, ctx, name: str):
+    async def load_cogs(self, ctx, name: str):
         """ 加載 cogs 擴展功能。 """
         try:
             self.bot.load_extension(f"cogs.{name}")
@@ -39,9 +44,9 @@ class 管理員(commands.Cog):
             return await ctx.send(f"汪嗚 ... 窩好像失敗惹 。･ﾟ･(つд`ﾟ)･ﾟ･。 他吐ㄌ一堆窩看不懂ㄉ咚咚{default.traceback_maker(e)}")
         await ctx.send(f"窩成功ㄉ加載了 **{name}.py** 哦汪 (`・ω・´)。")
 
-    @commands.command()
+    @commands.command(name="卸載cogs", aliases=["unload"])
     @commands.check(permissions.is_owner)
-    async def 卸載cogs(self, ctx, name: str):
+    async def unload_cogs(self, ctx, name: str):
         """ 卸載 cogs 擴展功能。 """
         try:
             self.bot.unload_extension(f"cogs.{name}")
@@ -49,9 +54,9 @@ class 管理員(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.send(f"窩成功ㄉ卸載了 **{name}.py** 哦汪 (`・ω・´)。")
 
-    @commands.command()
+    @commands.command(name="重新載入cogs", aliases=["reload"])
     @commands.check(permissions.is_owner)
-    async def 重新載入cogs(self, ctx, name: str):
+    async def reload_cogs(self, ctx, name: str):
         """ 重新載入 cogs 擴展功能。 """
         try:
             self.bot.reload_extension(f"cogs.{name}")
@@ -59,9 +64,9 @@ class 管理員(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.send(f"窩成功ㄉ重新載入了 **{name}.py** 哦汪 (`・ω・´)。")
 
-    @commands.command()
+    @commands.command(name="重新載入所有cogs", aliases=["reloadall", "r"])
     @commands.check(permissions.is_owner)
-    async def 重新載入所有cogs(self, ctx):
+    async def reload_all_cogs(self, ctx):
         """ 重新載入所有的 cogs 擴展功能。 """
         error_collection = []
         for file in os.listdir("cogs"):
@@ -83,9 +88,9 @@ class 管理員(commands.Cog):
 
         await ctx.send(f"窩已經成功重新載入所～有的 cogs 哦汪 (`・ω・´)。")
 
-    @commands.command()
+    @commands.command(name="重新載入utils", aliases=["reloadutils"])
     @commands.check(permissions.is_owner)
-    async def 重新載入utils(self, ctx, name: str):
+    async def reload_utils(self, ctx, name: str):
         """ 重新載入 utils 模組。 """
         name_maker = f"utils/{name}.py"
         try:
@@ -98,17 +103,23 @@ class 管理員(commands.Cog):
             return await ctx.send(f"汪嗚 ... 載入模組 **{name_maker}** 的時候，好像怪怪的吶 。･ﾟ･(つд`ﾟ)･ﾟ･ 有怪怪的東西窩看不懂\n{error}")
         await ctx.send(f"窩已經成功重新載入 **{name_maker}** 哦汪 (`・ω・´)。")
 
-    @commands.command()
+    @commands.command(name="重新啟動", aliases=["reboot"])
     @commands.check(permissions.is_owner)
-    async def 重新啟動(self, ctx):
+    async def reboot(self, ctx):
         """ 重新啟動機器人。 """
         await ctx.send('我現在要睡覺覺惹，主人晚安汪  ... (\*´з｀\*)')
-        time.sleep(1)
+        sys.exit(100)
+
+    @commands.command(name="關閉", aliases=["shutdown"])
+    @commands.check(permissions.is_owner)
+    async def shutdown(self, ctx):
+        """ 關閉機器人。 """
+        await ctx.send("我現在要睡覺覺惹，主人晚安汪  ... (\*´з｀\*)")
         sys.exit(0)
 
-    @commands.command()
+    @commands.command(name="傳訊息給", aliases=["dm"])
     @commands.check(permissions.is_owner)
-    async def 傳訊息給(self, ctx, user_id: int, *, message: str):
+    async def deliver_message(self, ctx, user_id: int, *, message: str):
         """ 傳訊息給使用者。 """
         user = self.bot.get_user(user_id)
         if not user:
@@ -120,15 +131,15 @@ class 管理員(commands.Cog):
         except discord.Forbidden:
             await ctx.send("汪嗚、我好像被這個人給封鎖惹嗚 ... (´;ω;`)")
 
-    @commands.group()
+    @commands.group(name="切換", aliases=["change"])
     @commands.check(permissions.is_owner)
-    async def 切換(self, ctx):
+    async def change(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(str(ctx.command))
 
-    @切換.command(name="狀態")
+    @change.command(name="狀態", aliases=["status"])
     @commands.check(permissions.is_owner)
-    async def 幫我換狀態(self, ctx, *, playing: str):
+    async def change_status(self, ctx, *, playing: str):
         """ 幫機器人換其他顯示狀態。 """
         if self.config.status_type == "閒置":
             status_type = discord.Status.idle
@@ -156,9 +167,9 @@ class 管理員(commands.Cog):
         except Exception as e:
             await ctx.send(e)
 
-    @切換.command(name="名字")
+    @change.command(name="名字", aliases=["username"])
     @commands.check(permissions.is_owner)
-    async def 幫我換名字(self, ctx, *, name: str):
+    async def change_username(self, ctx, *, name: str):
         """ 幫機器人換個新名字。 """
         try:
             await self.bot.user.edit(username=name)
@@ -166,10 +177,9 @@ class 管理員(commands.Cog):
         except discord.HTTPException as err:
             await ctx.send(f"汪嗚 ... 換名字的時候，好像怪怪的吶 。･ﾟ･(つд`ﾟ)･ﾟ･ 有怪怪的東西窩看不懂\n{err}")
 
-
-    @切換.command(name="暱稱")
+    @change.command(name="暱稱", aliases=["nickname"])
     @commands.check(permissions.is_owner)
-    async def 幫我換暱稱(self, ctx, *, name: str = None):
+    async def change_nickname(self, ctx, *, name: str = None):
         """ 幫機器人換個新暱稱。 """
         try:
             await ctx.guild.me.edit(nick=name)
@@ -180,9 +190,9 @@ class 管理員(commands.Cog):
         except Exception as err:
             await ctx.send(f"汪嗚 ... 換暱稱的時候，好像怪怪的吶 。･ﾟ･(つд`ﾟ)･ﾟ･ 有怪怪的東西窩看不懂\n{err}")
 
-    @切換.command(name="大頭貼")
+    @change.command(name="大頭貼", aliases=["avatar"])
     @commands.check(permissions.is_owner)
-    async def 幫我換大頭貼(self, ctx, url: str = None):
+    async def change_avatar(self, ctx, url: str = None):
         """ 幫機器人換個新大頭貼。 """
         if url is None and len(ctx.message.attachments) == 1:
             url = ctx.message.attachments[0].url
@@ -204,4 +214,4 @@ class 管理員(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(管理員(bot))
+    bot.add_cog(Admin(bot))
