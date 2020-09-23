@@ -1,8 +1,12 @@
 import os
 
 from utils import default
-from utils.data import Bot, HelpFormat
+from utils.data import (
+    Bot,
+    HelpFormat,
+)
 from multiprocessing import Process
+
 
 def main():
     config = default.get("config.json")
@@ -20,7 +24,10 @@ def main():
             name = file[:-3]
             bot.load_extension(f"cogs.{name}")
 
-    bot.run(config.token)
+    token = os.environ.get("TOKEN")
+    if token is None:
+        exit(2)
+    bot.run(token)
 
 
 if __name__ == '__main__':
@@ -32,4 +39,4 @@ if __name__ == '__main__':
             print('準備重啟 ...')
             continue
         else:
-            break
+            exit(p.exitcode)
