@@ -9,7 +9,11 @@ from multiprocessing import Process
 
 
 def main():
-    config = default.get("config.json")
+
+    config = default.get_from_env("CONFIG")
+    if config is None:
+        exit(3)
+
     print("機器人登入中 ...")
 
     bot = Bot(

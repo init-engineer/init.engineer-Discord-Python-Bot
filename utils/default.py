@@ -6,6 +6,7 @@ import timeago as timesince
 
 from collections import namedtuple
 from io import BytesIO
+import os
 
 
 def get(file):
@@ -17,6 +18,14 @@ def get(file):
     except FileNotFoundError:
         raise FileNotFoundError("找不到 JSON 檔案。")
 
+def get_from_env(key: str):
+    val = os.environ.get(key)
+    if val is None:
+        return None
+    try:
+        return json.loads(val, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+    except AttributeError:
+        raise AttributeError("命令執行失敗。")
 
 def traceback_maker(err, advance: bool = True):
     _traceback = ''.join(traceback.format_tb(err.__traceback__))
