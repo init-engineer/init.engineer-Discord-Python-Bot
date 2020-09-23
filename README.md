@@ -6,11 +6,11 @@
 
 1. 在[此處](https://discordapp.com/developers/applications/me)建立機器人，並取得機器人的 Token。
 2. 新增一個environment variable，key為"TOKEN"，value為上方取得的token
-2. 將根目錄下的 `config.json.example` 檔案重新命名為 `config.json`，然後填寫所需的資訊，例如 prefix 和 game。
-3. 要安裝應用程式所需要的套件，請執行 `pip install -r requirements.txt`，如果上面沒辦法正常執行的話，請執行 `python -m pip install -r requirements.txt`，要注意的是這可能需要使用 `Administrator/sudo` 來執行。
-4. 透過 `cmd/terminal` 終端機來啟動應用程式，你必須移動到該應用程式的資料夾，並且輸入 `python index.py` 來啟動。
+3. 新增一個environment variable，key為"CONFIG"，value你自己的config，格式是json，可以參考config.json.example填寫
+4. 要安裝應用程式所需要的套件，請執行 `pip install -r requirements.txt`，如果上面沒辦法正常執行的話，請執行 `python -m pip install -r requirements.txt`，要注意的是這可能需要使用 `Administrator/sudo` 來執行。
+5. 透過 `cmd/terminal` 終端機來啟動應用程式，你必須移動到該應用程式的資料夾，並且輸入 `python index.py` 來啟動。
 
-## config.json內容說明
+## CONFIG內容說明
 
 * ``prefix`` : 指令前綴
 * ``owners`` : 陣列，內容為開發者的ID
