@@ -44,7 +44,7 @@ async def api_img_creator(ctx, url, filename, content=None):
 class FunCommands(commands.Cog, name="有趣指令"):
     def __init__(self, bot):
         self.bot = bot
-        self.config = default.get("config.json")
+        self.config = default.get_from_env("CONFIG")
 
     @commands.command(name="貓", aliases=["cat"])
     @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)

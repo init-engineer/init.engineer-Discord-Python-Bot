@@ -33,7 +33,7 @@ class ActionReason(commands.Converter):
 class Moderator(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.config = default.get("config.json")
+        self.config = default.get_from_env("CONFIG")
 
     @commands.command()
     @commands.guild_only()

@@ -8,7 +8,7 @@ from discord.ext import commands
 class 基本功能(commands.Cog, name="基本功能"):
     def __init__(self, bot):
         self.bot = bot
-        self.config = default.get("config.json")
+        self.config = default.get_from_env("CONFIG")
 
     @commands.command(name="我的大頭貼", aliases=['avatar'])
     @commands.guild_only()

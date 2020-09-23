@@ -17,7 +17,7 @@ from utils import (
 class Admin(commands.Cog, name="管理員"):
     def __init__(self, bot):
         self.bot = bot
-        self.config = default.get("config.json")
+        self.config = default.get_from_env("CONFIG")
         self._last_result = None
 
     @commands.command(name="我是管理者嗎", aliases=["amiadmin"])
