@@ -20,3 +20,4 @@
     * ``roles`` : 陣列，內容為加入反應的貼圖名稱以及相對應的身分組
         * ``sticker`` : 加入反應的貼圖**名稱**，unicode emoji的名字即為emoji本身，伺服器的emoji則為當時設定的名稱
         * ``role`` : 相對應的身分組的ID
+* ``auto_publish_channels`` : 陣列，需要自動發布的頻道ID

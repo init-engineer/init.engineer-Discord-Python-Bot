@@ -1,15 +1,25 @@
+from discord import (
+    Forbidden,
+    HTTPException,
+    Message,
+    Permissions,
+)
 import discord
 import psutil
 import os
 
 from datetime import datetime
 from discord.ext import commands
-from discord.ext.commands import errors
+from discord.ext.commands import (
+    errors,
+    has_permissions,
+)
 from utils import default
+from utils.data import Bot
 
 
 class Events(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.config = default.get_from_env("CONFIG")
         self.process = psutil.Process(os.getpid())
@@ -56,6 +66,18 @@ class Events(commands.Cog):
             pass
         else:
             await to_send.send(self.config.join_message)
+
+    @commands.Cog.listener()
+    @has_permissions(manage_messages=True)
+    async def on_message(self, msg: Message):
+        if msg.channel.id in self.config.auto_publish_channels:
+            try:
+                await msg.publish()
+            except Forbidden as e:
+                print(e.text)
+                print("請檢察頻道設定")
+            except HTTPException as e:
+                print(e.text)
 
     @commands.Cog.listener()
     async def on_command(self, ctx):

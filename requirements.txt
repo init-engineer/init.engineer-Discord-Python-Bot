@@ -1,6 +1,6 @@
 aiohttp
 asyncio
-discord
+discord.py==1.6.0
 psutil
 pytz
 timeago==1.0.13
