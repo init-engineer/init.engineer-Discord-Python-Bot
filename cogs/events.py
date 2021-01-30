@@ -3,10 +3,13 @@ from discord import (
     HTTPException,
     Message,
     Permissions,
+    RawReactionActionEvent,
 )
 import discord
 import psutil
 import os
+
+import discord.guild
 
 from datetime import datetime
 from discord.ext import commands
@@ -117,7 +120,7 @@ class Events(commands.Cog):
         )
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
+    async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         reaction_roles = self.config.reaction_roles
         reaction_role = discord.utils.find(lambda r: r.message == payload.message_id, reaction_roles)
         if reaction_role is not None:
@@ -135,7 +138,7 @@ class Events(commands.Cog):
                 await payload.member.add_roles(role)
 
     @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, payload):
+    async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
         reaction_roles = self.config.reaction_roles
         reaction_role = discord.utils.find(lambda r: r.message == payload.message_id, reaction_roles)
         if reaction_role is not None:

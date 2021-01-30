@@ -6,21 +6,23 @@ from utils.data import (
     HelpFormat,
 )
 from multiprocessing import Process
+import discord
 
 
 def main():
-
     config = default.get_from_env("CONFIG")
     if config is None:
         exit(3)
 
     print("機器人登入中 ...")
-
+    intents = discord.Intents.default()
+    intents.members = True
     bot = Bot(
         command_prefix=config.prefix,
         prefix=config.prefix,
         command_attrs=dict(hidden=True),
-        help_command=HelpFormat()
+        help_command=HelpFormat(),
+        intents=intents
     )
 
     for file in os.listdir("cogs"):
